@@ -3,6 +3,7 @@ export enum Errors {
     'NotFoundError' = 'NotFoundError',
     'ConflictError' = 'ConflictError',
     'UnauthorizedError' = 'UnauthorizedError',
+    'TokenError' = 'TokenError',
 };
 
 type ErrorResponse = {
@@ -21,7 +22,7 @@ export const errorCatalog: ErrorCatalog = {
         httpStatus: 400,
     },
     NotFoundError: {
-        error: '',
+        error: 'Not Found',
         httpStatus: 404,
     },
     ConflictError: {
@@ -29,7 +30,11 @@ export const errorCatalog: ErrorCatalog = {
         httpStatus: 409,
     },
     UnauthorizedError: {
-        error: '',
+        error: 'Not Authorized',
         httpStatus: 401,
     },
+    TokenError: {
+        error: 'Invalid token',
+        httpStatus: 401,
+    }
 };

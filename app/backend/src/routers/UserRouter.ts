@@ -1,5 +1,4 @@
 import * as Router from 'express';
-// import validationLogin from '../middlewares/loginMiddleware';
 import UserController from '../controllers/UserController';
 import UserService from '../services/UsersService';
 
@@ -9,6 +8,7 @@ const userService = new UserService();
 const userController = new UserController(userService);
 
 router.post('/', (req, res) => userController.register(req, res));
-// router.get('/login/validate', userController.validate);
+router.post('/login', (req, res) => userController.login(req, res));
+router.get('/balance/:id', (req, res) => userController.readBalance(req, res));
 
 export default router;

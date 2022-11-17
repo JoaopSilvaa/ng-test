@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true,
       },
-      debitedAccountI: {
+      debitedAccountId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {

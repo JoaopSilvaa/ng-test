@@ -2,6 +2,7 @@ import * as express from 'express';
 import 'express-async-errors';
 import errorMiddleware from './middlewares/errorMiddleware';
 import usersRouter from './routers/UserRouter';
+import transactionsRouter from './routers/TransactionRouter';
 
 class App {
   public app: express.Express;
@@ -12,7 +13,8 @@ class App {
     this.config();
 
     this.app.get('/', (req, res) => res.json({ ok: true }));
-    this.app.use(usersRouter);
+    this.app.use('/users', usersRouter);
+    this.app.use('/transactions', transactionsRouter);
     this.app.use(errorMiddleware);
   }
 

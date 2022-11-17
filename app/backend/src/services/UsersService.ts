@@ -3,7 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import 'dotenv/config';
 import Users from '../database/models/Users';
 import IUser from '../Interfaces/IUser';
-import AccountService from './Accounts';
+import AccountService from './AccountsService';
 
 
 class UserService {
@@ -36,8 +36,7 @@ class UserService {
     return user;
   }
 
-  private doToken = (response: IUser): string => {
-    const { username } = response;
+  private doToken = (username: string): string => {
     const token = jwt.sign(
       { data: username },
       this.secret,
@@ -50,26 +49,55 @@ class UserService {
     const decode = jwt.verify(token, this.secret);
     return decode;
   };
+
+  public async login(obj: IUser): Promise<string> {
+    const { username, password } =  obj;
+    const result = await Users.findOne({ where: { username } });
+    if (result) {
+      const hash = bcrypt.compareSync(password, result.password)
+      if (hash == true) {
+        const token = this.doToken(username);
+        return token;
+      } else {
+        throw new Error("UnauthorizedError");
+      }
+    }
+    throw new Error("UnauthorizedError"); 
+  }
+
+  public async readBalance(token: string, id: number): Promise<number> {
+    const { data } = this.decriptToken(token);
+    const result = await Users.findOne({ where: { username: data } });   
+    if (!result) {
+      throw new Error("NotFoundError");
+    }
+    if (result.accountId !== id) {
+      throw new Error("UnauthorizedError");
+    } else {
+      return this._accounts.readOne(id);
+    }
+  }
+
+  public async validate(token: string): Promise<IUser> {
+    const { data } = this.decriptToken(token);
+    if (!data) {
+      throw new Error("TokenError");
+      
+    }
+    const result = await Users.findOne({ where: { username: data } });
+    if (!result) {
+      throw new Error("NotFoundError"); 
+    }
+    return result;
+  }
+
+  public async readOne(username: string): Promise<IUser> {
+    const result = await Users.findOne({ where: { username } });
+    if (!result) {
+      throw new Error("NotFoundError"); 
+    }
+    return result;
+  }
 }
 
 export default UserService;
-
-// export default class UserService {
-  
-  // register = async (username: string, password: string): Promise<boolean | null> => {
-    
-    // const result = bcrypt.compareSync(password, response.password);
-    // if (!result) return null;
-    // const token = doToken(response);
-    // return token;
-  // };
-
-  // validate = async (token: string): Promise<string | null> => {
-  //   const { data } = decriptToken(token);
-  //   if (!data) return null;
-  //   const response = await user.findOne({ where: { email: data } });
-  //   if (!response) return null;
-  //   const { role } = response;
-  //   return role;
-  // };
-// }

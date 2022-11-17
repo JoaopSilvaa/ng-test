@@ -16,7 +16,7 @@ Transactions.init({
     primaryKey: true,
     autoIncrement: true,
   },
-  debitedAccountI: {
+  debitedAccountId: {
     type: INTEGER,
     allowNull: false,
   },
@@ -30,15 +30,15 @@ Transactions.init({
   }
 }, {
   sequelize: db,
-  modelName: 'transactions',
+  modelName: 'Transactions',
   timestamps: true,
   updatedAt: false,
 });
 
-Transactions.belongsToMany(Accounts, {
-  foreignKey: 'id',
-  as: 'accountId',
-  through: 'accountId'
-});
+Transactions.belongsTo(Accounts,
+    { foreignKey: 'debitedAccountId', as: 'debitedAccount' });
+Transactions.belongsTo(Accounts,
+    { foreignKey: 'creditedAccountId', as: 'creditedAccount' });
+
 
 export default Transactions;
