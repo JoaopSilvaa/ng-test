@@ -9,8 +9,8 @@ export default class UserController {
     }
 
   public async register(req: Request, res: Response) {
-    const result = await this._service.register(req.body);
-    return res.status(201).json(result);
+    const user = await this._service.register(req.body);
+    return res.status(201).json(user);
   };
 
   public async login(req: Request, res: Response) {
@@ -26,5 +26,17 @@ export default class UserController {
     }
     const balance = await this._service.readBalance(token, Number(id));
     return res.status(200).json({ balance });
+  }
+
+  public async readOne(req: Request, res: Response) {
+    const { username } = req.body;
+    const user = await this._service.readOne(username);
+    return res.status(200).json(user);
+  }
+
+  public async readByAccountId(req: Request, res: Response) {
+    const { accountId } = req.params;
+    const user = await this._service.readByAccountId(Number(accountId));
+    return res.status(200).json(user);
   }
 }

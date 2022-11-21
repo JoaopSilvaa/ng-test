@@ -82,10 +82,26 @@ class TransactionsService {
     return result;
   }
 
-  public async readByDate(token: string, date: string): Promise<ITransaction[]> {
-    await this._users.validate(token);
+  // public async readByDate(token: string, date: string): Promise<ITransaction[]> {
+  //   await this._users.validate(token);
+  //   const result = await Transactions.findAll({
+  //     where: sequelize.where(sequelize.fn('date', sequelize.col('createdAt')), '=', date)
+  //   });  
+  //   if (result.length == 0) {
+  //     throw new Error("NotFoundError");
+  //   }
+  //   return result;
+  // }
+
+  public async readByDate(token: string): Promise<ITransaction[]> {
+    const user = await this._users.validate(token);
     const result = await Transactions.findAll({
-      where: sequelize.where(sequelize.fn('date', sequelize.col('createdAt')), '=', date)
+      where: { [Op.or]: [
+        {'debitedAccountId': user.id },
+        {'creditedAccountId': user.id},
+      ],
+      },
+      order: [['createdAt', 'DESC']],
     });  
     if (result.length == 0) {
       throw new Error("NotFoundError");

@@ -16,7 +16,7 @@ class UserService {
     this._accounts = new AccountService();
   }
 
-  public async register(obj: IUser): Promise<IUser> {
+  public async register(obj: IUser): Promise<IUser | null> {
     const { username, password } = obj;
     const regex = /(?=.*[A-Z])(?=.*[0-9]).*$/;
     const response = await Users.findOne({ where: { username } });
@@ -26,7 +26,9 @@ class UserService {
       }
       const hash = bcrypt.hashSync(password, this.saltRounds);
       const accountId = await this._accounts.create();
-      return this.create({ username, password: hash, accountId });
+      const result = await this.create({ username, password: hash, accountId });
+      const name = result.username;
+      return Users.findOne({ where: { name }, attributes: { exclude: ['password'] } })
     }
       throw new Error("ConflictError");
   }
@@ -92,7 +94,15 @@ class UserService {
   }
 
   public async readOne(username: string): Promise<IUser> {
-    const result = await Users.findOne({ where: { username } });
+    const result = await Users.findOne({ where: { username }, attributes: { exclude: ['password'] } });
+    if (!result) {
+      throw new Error("NotFoundError"); 
+    }
+    return result;
+  }
+
+  public async readByAccountId(accountId: number): Promise<IUser> {
+    const result = await Users.findOne({ where: { accountId }, attributes: { exclude: ['password'] } });
     if (!result) {
       throw new Error("NotFoundError"); 
     }
