@@ -77,7 +77,7 @@ O projeto é composto de 4 entidades importantes para sua estrutura:
   - Para realizar Transações:
     * Você precisa ter saldo suficiente na sua conta;
     * Colocar um username válido para transferir;
-    * Não pode ser seu próprio username
+    * Não transferir para seu próprio username
 </details>
 
 Projeto Desenvolvido por [João Antônio](https://github.com/JoaopSilvaa)
