@@ -68,4 +68,16 @@ O projeto é composto de 4 entidades importantes para sua estrutura:
   - Os comando de _compose_ anteriores estão configurados para executar o _docker-compose_ com o terminal desanexado (detached mode `-d`). Caso queira acompanhar os logs de um serviço em tempo real pelo terminal, basta executar `npm run logs [nome_do_servico]` onde _nome_do_servico_ é opcional e pode receber os serviços _backend_, _frontend_ ou _db_
 </details>
 
+<details>
+  <summary><strong> 👨‍💻 Informações Importantes </strong></summary><br />
+
+  - Para conseguir criar um usuário você precisa:
+    * Colocar um username com pelo menos 3 caracteres;
+    * Um password com pelo menos 8 caracteres, um número e uma letra maiúscula;
+  - Para realizar Transações:
+    * Você precisa ter saldo suficiente na sua conta;
+    * Colocar um username válido para transferir;
+    * Não pode ser seu próprio username
+</details>
+
 Projeto Desenvolvido por [João Antônio](https://github.com/JoaopSilvaa)
