@@ -64,6 +64,7 @@ O projeto é composto de 4 entidades importantes para sua estrutura:
   <summary><strong> 👀 Comandos úteis </strong></summary><br />
 
   - Assim que você baixar o projeto rode o comando `npm install` na pasta raiz do projeto para **instalar as dependências gerais do projeto**;
+  - Após a instalação, você pode executar `npm run compose:up` para subir os containers da aplicação e abrir o endereço `localhost:3000` no seu navegador para utilizar das suas funcionalidades.
   - Você pode **subir ou descer uma aplicação do compose**, utilizando `npm run` com os scripts `compose:up`, `compose:down`;
   - Os comando de _compose_ anteriores estão configurados para executar o _docker-compose_ com o terminal desanexado (detached mode `-d`). Caso queira acompanhar os logs de um serviço em tempo real pelo terminal, basta executar `npm run logs [nome_do_servico]` onde _nome_do_servico_ é opcional e pode receber os serviços _backend_, _frontend_ ou _db_
 </details>
