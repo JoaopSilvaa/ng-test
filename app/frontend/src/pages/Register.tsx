@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { sendData } from '../services/requests';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import './Register.css';
 
 const Register = () => {
     const [username, setUsername] = useState('');
@@ -8,18 +10,18 @@ const Register = () => {
     const [disabled, setDisabled] = useState(true);
     const [failedTryRegister, setFailedTryRegister] = useState(false);
     const [registred, setRegistred] = useState(false);
+    const [visibility, setVisibility] = useState(false);
 
     const register = async (event: any) => {
         event.preventDefault();
-
+        
         try {
-            const data = await sendData('/users', { username, password });
-            localStorage.setItem('username', data);
+            await sendData('/users', { username, password });
             setRegistred(true);
-            const time = setTimeout(() => setRegistred(false), 1000);
-            clearTimeout(time);
+            setTimeout(() => setRegistred(false), 1000);
         } catch (error){
             setFailedTryRegister(true);
+            setTimeout(() => setFailedTryRegister(false), 3000);
         }
     }
 
@@ -37,71 +39,104 @@ const Register = () => {
         }
     }
 
+    const show = ({ target }: any) => {
+        if (!target.width) {
+          const svg = target.parentElement;
+          const div = svg.parentElement;
+          const input = div.firstChild;
+          input.type='text';
+          setVisibility(true);
+        } else {
+          const div = target.parentElement;
+          const input = div.firstChild;
+          input.type='text';
+          setVisibility(true);
+        }
+      }
+  
+      const dontshow = ({ target }: any) => {
+        if (!target.width) {
+          const svg = target.parentElement;
+          const div = svg.parentElement;
+          const input = div.firstChild;
+          input.type='password';
+          setVisibility(false);
+        } else {
+          const div = target.parentElement;
+          const input = div.firstChild;
+          input.type='password';
+          setVisibility(false);
+        }
+      }
+
     useEffect(() => {
         setFailedTryRegister(false);
     }, [username, password]);
     
     return (
-        <main>
-            <header>
-                <Link to="/login">
-                    <button
-                        type="button"
-                        >
-                        Clique aqui para fazer Login
-                    </button>
-                </Link>
-            </header>
-            <section>
-                <form>
-                    <h1>Registro</h1>
-                    <label htmlFor="username-input">
+        <main className="register">
+            <form className="formRegister">
+                <h1 className="titleRegister">Registro</h1>
+                <label className="labelRegister" htmlFor="username-input">
+                    <input
+                        className="inputRegister"
+                        type="text"
+                        name="username"
+                        value={ username }
+                        onChange={ (event) => handleChange(event) }
+                        placeholder="Username"
+                    />
+                </label>
+                <label className="labelRegister" htmlFor="password-input">
+                    <div className="password">
                         <input
-                            type="text"
-                            name="username"
-                            value={ username }
-                            onChange={ (event) => handleChange(event) }
-                            placeholder="Username"
-                        />
-                    </label>
-                    <label htmlFor="password-input">
-                        <input
+                            className="inputRegisterPassword"
                             type="password"
                             name="password"
                             value={ password }
                             onChange={ (event) => handleChange(event) }
                             placeholder="Password"
                         />
-                    </label>
-                    {
-                        (failedTryRegister)
-                            ? (
-                                <p>
-                                  {
-                                    `Username ou senha inválidos.
-                                    Por favor, tente novamente.`
-                                  }  
-                                </p>
-                            )
-                            : null
-                    }
-                    {
-                        (registred)
-                        ? (
-                            <p>
-                                Usuário criado com sucesso!
-                            </p>
-                        ) : null
-                    }
-                    <button
-                        type="submit"
-                        onClick={ (event) => register(event) }
-                        disabled={ disabled }
+                        { !visibility ? <FaEye className="eye" onClick={ show } /> : <FaEyeSlash className="eye" onClick={ dontshow } /> }
+                    </div>
+                </label>
+                <button
+                    className="buttonRegister"
+                    type="submit"
+                    onClick={ (event) => register(event) }
+                    disabled={ disabled }
+                >
+                    Cadastro
+                </button>
+                <Link to="/login">
+                <button
+                    type="button"
+                    className="buttonLoginInRegister"
                     >
-                        Cadastro
-                    </button>
-                </form>
-            </section>
+                    Clique aqui para fazer Login
+                </button>
+            </Link>
+            {
+                (failedTryRegister)
+                    ? (
+                        <p className="errors">
+                            {
+                            `Username ou senha inválidos.
+                            Por favor, tente novamente.`
+                            }  
+                        </p>
+                    )
+                    : null
+            }
+            {
+                (registred)
+                ? (
+                    <p className="success">
+                        Usuário criado com sucesso!
+                    </p>
+                ) : null
+            }
+            </form>
         </main>
     )
 }

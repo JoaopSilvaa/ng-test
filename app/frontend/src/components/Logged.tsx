@@ -1,37 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { requestData, sendData } from '../services/requests';
+import './Logged.css';
 
-const Logged = (user: any) => {
-    const [thisUser, setThisUser] = useState({});
-    const [balance, setBalance] = useState({});
+const Logged = ({ user }: any) => {
+    const [thisUsername, setThisUsername] = useState('');
+    const [thisId, setThisId] = useState('');
+    const [balance, setBalance] = useState();
     const [cashes, setCashes] = useState([]);
-    const [filter, setFilter] = useState('all');
     const [value, setValue] = useState('');
     const [creditedAccountUser, setCreditedAccountUser] = useState('');
     const [failedTryTransfer, setFailedTryTransfer] = useState(false);
 
+    const formatData = (date: string) => {
+        const four = 4;
+        const eight = 8;
+        const day = date.substr(eight, 2);
+        const year = date.substr(0, four);
+        const month = date.substr(four + 1, 2);
+        return `${day}/${month}/${year}`;
+      };
+
     useEffect(() => {
         const renderData = async () => {
-            setThisUser(JSON.parse(user));
-            const usuario = JSON.parse(user);
-            setBalance( await requestData(`/users/balance/${usuario.id}`));
-            setCashes(await requestData('/transactions'));
+            const usuario = JSON.parse(user); 
+            setThisUsername(usuario.username);
+            setThisId(usuario.id);
+            const { balance } = await requestData(`/users/balance/${usuario.id}`);
+            setBalance(balance);
+            setCashes(await requestData('/transactions'));   
         };
         renderData();
-        }, [user]);
+    }, [user]);
     
+    useEffect(() => {
+        async function getCashes() {
+            handleFilter();
+            if (thisId !== '') {
+                const { balance } = await requestData(`/users/balance/${thisId}`);
+                setBalance(balance);
+            }
+        }
+        getCashes();
+    });
+
     const handleFilter = async () => {
-        const selectedFilter = (document.getElementById('filter') as HTMLInputElement).value;
-        setFilter(selectedFilter);
+        const filter = (document.getElementById('filter') as HTMLInputElement).value;
         if (filter === 'all') {
-            setCashes(await requestData('/transactions'));
+            const cashes = await requestData('/transactions')
+            setCashes(cashes);
         } else if (filter === 'cash-in') {
-            setCashes(await requestData('transactions/cash-in'));
+            const cashes = await requestData('transactions/cash-in')
+            setCashes(cashes);
         } else if (filter === 'cash-out') {
-            setCashes(await requestData('transactions/cash-out'));
+            const cashes = await requestData('transactions/cash-out')
+            setCashes(cashes);
         } else if (filter === 'data') {
-            setCashes(await requestData('transactions/bydate'));
+            const cashes = await requestData('transactions/bydate')
+            setCashes(cashes);
         }
     }
 
@@ -39,60 +65,62 @@ const Logged = (user: any) => {
         event.preventDefault();
 
         try {
-            await sendData('/transactions', { creditedAccountUser, value });
+            const valor = Number(value);
+            await sendData('/transactions', { creditedAccountUser, value: valor });
             alert('Transação realizada com sucesso');
             setFailedTryTransfer(false);
         } catch (error){
             setFailedTryTransfer(true);
+            setTimeout(() => setFailedTryTransfer(false), 3000);
         }
     }
 
-    // const handleUser = async (accountId: number) => {
-    //     const { username } = await requestData(`/users/${accountId}`);
-    //     return <span>{username}</span>;
-    // }
-
     return (
-        <main>  
-            <header>
+        <main className='logged'>  
+            <header className='header'>
                 <p>
                     {
-                        `Olá, ${thisUser}!`
+                        `Olá, ${thisUsername}!`
                     }
                 </p>
                 <p>
                     {
-                        `Seu balance é de: ${balance}`
+                        `Seu balance é de: R$ ${balance}`
                     }
                 </p>
                 <Link to="/login">
                     <button
+                        className="buttonLogout"
                         type="button"
+                        onClick={ () => localStorage.clear() }
                         >
                         Logout
                     </button>
                 </Link>
             </header>
-            <section>
-                <form>
+            <section className='transfers'>
+                <form className='transfers-form'>
                     <h1>Realize uma transferência agora:</h1>
-                    <label>
+                    <label htmlFor="valor-input">
                         Valor:
-                        <input 
+                        <input
+                            className='inputTransfer' 
                             type="text"
                             onChange={ ({ target: { value } }) => setValue(value) }
                             placeholder="Valor"
                         />
                     </label>    
-                    <label>
-                        Usuário que receberá a transferência:
-                        <input 
+                    <label htmlFor="username-input">
+                        Usuário:
+                        <input
+                            className='inputTransfer' 
                             type="text"
                             onChange={ ({ target: { value } }) => setCreditedAccountUser(value) }
                             placeholder="Username"
                         />
                     </label>
                     <button
+                        className="buttonTransfer"
                         type="submit"
                         onClick={ (event) => transfer(event) }
                     >
@@ -101,7 +129,7 @@ const Logged = (user: any) => {
                     {
                         (failedTryTransfer)
                         ? (
-                            <p>
+                            <p className="errorTransfer">
                                 {
                                     `Usuário ou valor inválido`
                                 }
@@ -110,25 +138,23 @@ const Logged = (user: any) => {
                     }
                 </form>
             </section>
-            <section>
-                <h1>Tabela com suas transações:</h1>
-                <label>
-                    <select
-                        id="filter"
-                    >
-                        <option>all</option>
-                        <option>data</option>
-                        <option>cash-in</option>
-                        <option>cash-out</option>
-                    </select>
-                    <button
-                        type="button"
-                        onClick={ () => handleFilter() }
-                    >
-                        Filtrar
-                    </button>
-                </label>
-                <table>
+            <section className='transactions'>
+                <div className='topTable'>
+                    <h1>Transações:</h1>
+                    <label>
+                        Selecione um filtro:
+                        <select
+                            className='selections'
+                            id='filter'
+                        >
+                            <option>all</option>
+                            <option>data</option>
+                            <option>cash-in</option>
+                            <option>cash-out</option>
+                        </select>
+                    </label>
+                </div>
+                <table className='table'>
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -152,8 +178,8 @@ const Logged = (user: any) => {
                                         <td>{ id }</td>
                                         <td>{ debitedAccountId }</td>
                                         <td>{ creditedAccountId }</td>
-                                        <td>{ value }</td>
-                                        <td>{ createdAt }</td>
+                                        <td>R$ { value }</td>
+                                        <td>{ formatData(createdAt) }</td>
                                     </tr>
                                 ))
                         }

@@ -1,0 +1,45 @@
+.NotLogged {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.NotLoggedButtons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.NotLoggedButtons a {
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.titleHome {
+    font-size: 180%;
+    margin-bottom: 0.8em;
+    width: 100%;
+    text-align: center;
+}
+
+.buttons {
+    width: 80%;
+    font-size: 18px;
+    border: 1px solid rgb(30,45,59);
+    border-radius: 5px;
+    margin-top: 30px;
+    padding: 8px;
+    color: white;
+    background-color: rgb(30,45,59);
+}
+
+.buttons:hover {
+    background-color: rgb(52, 75, 97);
+    cursor: pointer;
+    transition: 0.2s;
+}

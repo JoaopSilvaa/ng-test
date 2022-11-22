@@ -54,9 +54,6 @@ class TransactionsService {
       ]
       },
     });
-    if (result.length == 0) {
-      throw new Error("NotFoundError");
-    }
     return result;
   }
 
@@ -65,9 +62,6 @@ class TransactionsService {
     const result = await Transactions.findAll({
       where: { 'debitedAccountId': user.id },
     });
-    if (result.length == 0) {
-      throw new Error("NotFoundError");
-    }
     return result;
   }
 
@@ -76,9 +70,6 @@ class TransactionsService {
     const result = await Transactions.findAll({
       where: { 'creditedAccountId': user.id },
     });
-    if (result.length == 0) {
-      throw new Error("NotFoundError");
-    }
     return result;
   }
 

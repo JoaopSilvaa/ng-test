@@ -27,8 +27,7 @@ class UserService {
       const hash = bcrypt.hashSync(password, this.saltRounds);
       const accountId = await this._accounts.create();
       const result = await this.create({ username, password: hash, accountId });
-      const name = result.username;
-      return Users.findOne({ where: { name }, attributes: { exclude: ['password'] } })
+      return Users.findOne({ where: { username }, attributes: { exclude: ['password'] } })
     }
       throw new Error("ConflictError");
   }
