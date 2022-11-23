@@ -29,7 +29,7 @@ O projeto é composto de 4 entidades importantes para sua estrutura:
  - A aplicação é inicializada a partir do arquivo `app/backend/src/server.ts`;
 
 3️⃣ **Front-end:**
-  - Deve rodar na porta `3001`;
+  - Deve rodar na porta `3000`;
   - O front se comunica com serviço de back-end pela url `http://localhost:3001` através dos endpoints contruídos.
 
 4️⃣ **Docker:**
